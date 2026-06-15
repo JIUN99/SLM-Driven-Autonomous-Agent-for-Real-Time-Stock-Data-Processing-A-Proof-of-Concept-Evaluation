@@ -1,0 +1,4 @@
+Model,Full test F1,COVID crash F1,2022 inflation F1,Stable 2023 F1,Degradation (stable vs inflation)
+Logistic Regression,0.4426,0.5669,0.45,0.4266,-0.0234
+XGBoost,0.5075,0.8809,0.5087,0.5096,0.0009
+LSTM,0.4655,0.6207,0.491,0.4528,-0.0382
