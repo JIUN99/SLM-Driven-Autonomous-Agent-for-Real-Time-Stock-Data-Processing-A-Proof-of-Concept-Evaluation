@@ -6,7 +6,7 @@
 
 ## Overview
 
-This repository contains the full experiment code, results, and figures for a proof-of-concept evaluation of a Small Language Model (SLM)-driven autonomous agent system for real-time stock data processing. The study demonstrates that competitive financial signal classification and sub-100ms inference latency are achievable using exclusively free-tier, open-source tools — without paid cloud infrastructure, proprietary APIs, or GPU subscriptions.
+This repository contains the full experiment code, results, and figures for a proof-of-concept evaluation of a Small Language Model (SLM)-driven autonomous agent system for real-time stock data processing. The study demonstrates that competitive financial signal classification and sub-100ms inference latency are achievable using exclusively free-tier, open-source tools without paid cloud infrastructure, proprietary APIs, or GPU subscriptions.
 
 The system deploys an INT8-quantised FinBERT model via ONNX Runtime on CPU, benchmarked against three reproducible machine learning baselines (Logistic Regression, XGBoost, LSTM) across a six-year historical equity dataset spanning two major market stress regimes.
 
