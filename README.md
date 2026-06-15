@@ -1,6 +1,5 @@
 # SLM-Driven Autonomous Agent for Real-Time Stock Data Processing
 
-Master of Data Science — Universiti Malaya, 2025
 
 ## Overview
 This repository contains the experiment code, results, and figures
@@ -26,6 +25,3 @@ autonomous agent system for financial stock data processing.
 | LSTM | 0.4655 | 8.58ms |
 | Logistic Regression | 0.4426 | 4.25ms |
 
-## Author
-Master of Data Science Student
-Universiti Malaya, Malaysia
