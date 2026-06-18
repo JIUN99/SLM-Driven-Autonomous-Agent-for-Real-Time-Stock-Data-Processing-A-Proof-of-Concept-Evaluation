@@ -1,12 +1,11 @@
 # SLM-Driven Autonomous Agent for Real-Time Stock Data Processing
 ### A Proof-of-Concept Evaluation
 
-
 ---
 
 ## Overview
 
-This repository contains the full experiment code, results, and figures for a proof-of-concept evaluation of a Small Language Model (SLM)-driven autonomous agent system for real-time stock data processing. The study demonstrates that competitive financial signal classification and sub-100ms inference latency are achievable using exclusively free-tier, open-source tools without paid cloud infrastructure, proprietary APIs, or GPU subscriptions.
+This repository contains the full experiment code, results, and figures for a proof-of-concept evaluation of a Small Language Model (SLM)-driven autonomous agent system for real-time stock data processing. The study demonstrates that competitive financial signal classification and sub-100ms inference latency are achievable using exclusively free-tier, open-source tools — without paid cloud infrastructure, proprietary APIs, or GPU subscriptions.
 
 The system deploys an INT8-quantised FinBERT model via ONNX Runtime on CPU, benchmarked against three reproducible machine learning baselines (Logistic Regression, XGBoost, LSTM) across a six-year historical equity dataset spanning two major market stress regimes.
 
@@ -25,26 +24,31 @@ The system deploys an INT8-quantised FinBERT model via ONNX Runtime on CPU, benc
 
 | Model | Macro F1 | ROC-AUC | Latency p95 (ms) |
 |---|---|---|---|
-| **FinBERT INT8 (SLM)** | **0.5833** | **0.5833** | **18.35** |
-| XGBoost | 0.5075 | 0.5120 | 2.92 |
-| LSTM | 0.4655 | 0.5064 | 8.58 |
-| Logistic Regression | 0.4426 | 0.5112 | 4.25 |
+| **FinBERT INT8 (SLM)** | **0.5833** | **0.5833** | **18.39** |
+| XGBoost | 0.5100 | 0.5162 | 4.34 |
+| LSTM | 0.4702 | 0.5049 | 2.77 |
+| Logistic Regression | 0.4426 | 0.5112 | 2.31 |
+
+FinBERT INT8 latency breakdown: p50 = 13.93ms, p95 = 18.39ms, p99 = 18.81ms. Energy consumption (approx.): 0.089281 kWh per 1,000 samples (includes model loading overhead, see thesis Section 4.3.1 for methodology caveat).
 
 **Statistical tests:**
-- McNemar's test: statistic = 56.1850, p < 0.05 (XGBoost vs Logistic Regression)
-- One-way ANOVA: F = 9.9984, p < 0.05 (XGBoost across 3 regime sub-periods)
+- McNemar's test: statistic = 42.8823, p < 0.0001 (XGBoost vs Logistic Regression)
+- One-way ANOVA: F = 22.9854, p < 0.0001 (XGBoost across 3 regime sub-periods)
 
-**Regime robustness:** All three baseline models satisfied the 5% robustness threshold between the stable 2023 and 2022 inflation sub-periods.
+**Regime robustness:** All three baseline models satisfied the 5% robustness threshold between the stable 2023 and 2022 inflation sub-periods (XGBoost +0.0018, LSTM −0.0385, Logistic Regression −0.0234).
+
+**Governance audit log:** Validated end to end against a live inference run. 1,000 rows successfully logged to SQLite with SHA-256 input hash, predicted label, confidence score, model version, and UTC timestamp per entry. Verified via integrity check and direct query.
 
 ---
 
 ## Repository Structure
 
 ```
-├── SLM_Thesis_Experiment_v2.ipynb   # Main experiment notebook (run on Google Colab)
+├── SLM_Thesis_Experiment_v3.ipynb   # Main experiment notebook (run on Google Colab)
 ├── results/
 │   ├── thesis_results_summary.csv   # Full model performance results
 │   ├── regime_results.csv           # Regime sub-period F1 scores
+│   ├── audit_log.db                 # SQLite governance audit log (1,000 logged inferences)
 │   ├── figure1_f1_auc.png           # F1 and AUC bar charts
 │   ├── figure2_latency.png          # Inference latency comparison
 │   └── figure3_regime.png           # Regime heatmap
@@ -63,7 +67,7 @@ The system deploys an INT8-quantised FinBERT model via ONNX Runtime on CPU, benc
 
 **1. Open the notebook in Google Colab**
 
-Click the badge below or upload `SLM_Thesis_Experiment_v2.ipynb` to [Google Colab](https://colab.research.google.com):
+Click the badge below or upload `SLM_Thesis_Experiment_v3.ipynb` to [Google Colab](https://colab.research.google.com):
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com)
 
@@ -84,6 +88,7 @@ The notebook will automatically:
 - Compute 16 technical indicators using pandas-ta
 - Train Logistic Regression, XGBoost, and LSTM baselines
 - Deploy FinBERT quantised to INT8 via ONNX Runtime
+- Log every SLM inference decision to a SQLite audit database (input hash, prediction, confidence, model version, timestamp), built from existing inference data with no extra model calls
 - Evaluate across full test window and 3 regime sub-periods
 - Run McNemar and ANOVA statistical tests
 - Generate all result charts and CSV files
@@ -93,7 +98,10 @@ The notebook will automatically:
 From the Colab file sidebar, download:
 - `thesis_results_summary.csv`
 - `regime_results.csv`
+- `audit_log.db`
 - `figure1_f1_auc.png`, `figure2_latency.png`, `figure3_regime.png`
+
+**Tip:** wait until the cell prints "Audit log populated: X rows written" before downloading `audit_log.db`, downloading mid-write can produce a corrupted file.
 
 ---
 
@@ -134,9 +142,8 @@ From the Colab file sidebar, download:
 - Malo, P., et al. (2014). Good debt or bad debt: Detecting semantic orientations in economic texts. *JASIST*, 65(4)
 - Vaswani, A., et al. (2017). Attention is all you need. *NeurIPS 2017*. arXiv:1706.03762
 
-```
-
 ---
+
 
 ## License
 
